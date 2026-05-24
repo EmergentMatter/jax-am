@@ -24,6 +24,8 @@ removed:
 - `demos/fem/` (~29 MB, additional FEM demos at the repo root that all
   imported from the deleted `jax_am.fem` and would have shipped as
   broken stubs)
+- `tests_for_fem/` (~16 KB, 3 test files that all imported from the
+  deleted module; would have failed at collection time)
 - `gmsh` and `fenics-basix` from `setup.py` `install_requires`
   (verified zero imports in the surviving `cfd`, `lbm`, `phase_field`
   modules; both were FEM-only deps)
