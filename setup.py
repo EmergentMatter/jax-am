@@ -32,10 +32,13 @@ if __name__=='__main__':
             "scipy",
             "orix",
             "meshio",
-            "gmsh",
             "pyfiglet",
             "scikit-learn",
-            "fenics-basix"
+            # gmsh, fenics-basix removed in EmergentMatter fork:
+            # they were FEM-only deps consumed by the now-deleted
+            # jax_am/fem/ module. Verified zero imports remaining
+            # in jax_am/{cfd,lbm,phase_field}. meshio kept — used
+            # by jax_am/common.py + jax_am/lbm/core.py + most demos.
         ],
         url="https://github.com/tianjuxue/jax-am",
         license="GPL-3.0",

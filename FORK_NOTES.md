@@ -21,6 +21,12 @@ removed:
 - `jax_am/fem/` (~2.6 MB, the deprecated FEM module)
 - `applications/fem/` (~4.0 MB, FEM demos that exercised the deprecated
   module)
+- `demos/fem/` (~29 MB, additional FEM demos at the repo root that all
+  imported from the deleted `jax_am.fem` and would have shipped as
+  broken stubs)
+- `gmsh` and `fenics-basix` from `setup.py` `install_requires`
+  (verified zero imports in the surviving `cfd`, `lbm`, `phase_field`
+  modules; both were FEM-only deps)
 
 The FEM lineage is now exclusively at
 [deepmodeling/jax-fem](https://github.com/deepmodeling/jax-fem),
@@ -45,10 +51,10 @@ mirrored at [EmergentMatter/jax-fem](https://github.com/EmergentMatter/jax-fem).
 | `jax_am/phase_field/` | Phase field (dendrite formation, grain growth, Allen-Cahn) | Independent, usable |
 | `jax_am/common.py` | Shared utilities | Used by all subpackages |
 
-`setup.py` was deliberately not edited. It still lists `gmsh`,
-`meshio`, and `fenics-basix` — these were primarily FEM deps but may
-incidentally be used by other modules; pruning them is deferred to a
-follow-up audit if/when it matters.
+`setup.py` had `gmsh` and `fenics-basix` removed from `install_requires`
+(zero imports in surviving code; both were FEM-only). `meshio` is
+kept — it's actively used by `jax_am/common.py`, `jax_am/lbm/core.py`,
+and most demos under `applications/{cfd,phase_field}/`.
 
 ## Suggested dependency layout for a new project
 
@@ -77,12 +83,19 @@ on each other internally.
 
 ## Rebase-against-upstream cost
 
-Removing `jax_am/fem/` is the only divergence from upstream introduced
-by this fork. If upstream ever revives jax-am development (unlikely
-given they've stated otherwise), merge conflicts will be limited to
-the deleted paths — which can be re-resolved by `git rm` after rebase.
-We accept this small ongoing cost as the price for a clean fork that
-doesn't ship 6+ MB of code marked "will not be updated."
+Removing the deprecated FEM tree + its FEM-only deps is the entirety
+of this fork's divergence from upstream. Concretely:
+
+- `jax_am/fem/`, `applications/fem/`, `demos/fem/` — deleted paths
+- 2 lines removed from `setup.py` (`gmsh`, `fenics-basix`)
+- 1 new file (`FORK_NOTES.md`, this file)
+
+If upstream ever revives jax-am development (unlikely given they've
+stated otherwise), merge conflicts will be limited to the deleted
+paths + the small setup.py diff — both trivially re-resolved by
+`git rm` and a 2-line setup.py re-edit after rebase. We accept this
+small ongoing cost as the price for a clean fork that doesn't ship
+~35 MB of code marked "will not be updated."
 
 ## How this fork was created
 
