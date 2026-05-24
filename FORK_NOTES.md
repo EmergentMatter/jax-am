@@ -83,6 +83,38 @@ residual stress after a print run combines `jax_am.cfd` for melt-pool
 flow → `jax_fem` for the stress solve). The two libraries don't depend
 on each other internally.
 
+## Recovering the one unique deleted demo (phase_field_fracture)
+
+Most of the deleted FEM demos (`hyperelasticity`, `inverse`,
+`linear_elasticity`, `plasticity`, `poisson`, `thermal_mechanical`,
+`topology_optimization`) are duplicated by better-maintained demos
+in [`deepmodeling/jax-fem`](https://github.com/deepmodeling/jax-fem)'s
+own `applications/` directory (and our `EmergentMatter/jax-fem` fork
+inherits them). Nothing real is lost — use jax-fem's demos for
+FEM-internal patterns.
+
+The exception: **`demos/fem/phase_field_fracture/`** demonstrated a
+unique coupling pattern between `jax_am.phase_field` (which this
+fork keeps) and FEM (which it removed). That coupling pattern is
+not directly replicated anywhere else in our ecosystem.
+
+If a future project needs FEM-coupled phase-field fracture, recover
+the upstream snapshot as a *structural reference* and re-port it to
+use `jax_fem` instead of the deleted `jax_am.fem`:
+
+```bash
+# From any machine with the mirror backup:
+cd <workspace>/.backups/cmsl-hkust-jax-am.git
+git show HEAD:demos/fem/phase_field_fracture/example.py
+git show HEAD:demos/fem/phase_field_fracture/eigen.py
+git show HEAD:demos/fem/phase_field_fracture/animation.py
+```
+
+Treat as historical reference — the recovered files import from the
+deleted `jax_am.fem` module and will NOT run as-is in this fork. The
+re-port to `jax_fem` is the actual work; the upstream code is the
+recipe, not the implementation.
+
 ## Rebase-against-upstream cost
 
 Removing the deprecated FEM tree + its FEM-only deps is the entirety
